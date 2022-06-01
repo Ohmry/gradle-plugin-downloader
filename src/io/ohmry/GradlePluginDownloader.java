@@ -55,13 +55,16 @@ public class GradlePluginDownloader {
         }
 
         try {
+            if (DEBUG_MODE) {
+                Logger.debug("Connect to " + GRADLE_PLUGIN_URL + pluginName + "/" + pluginVersion);
+            }
             String contents = URLReader.read(GRADLE_PLUGIN_URL + pluginName + "/" + pluginVersion);
             String repositoryUrl = RegexMatcher.find(GRADLE_REPOSITORY_REGEX, contents);
             String classPath = RegexMatcher.find(GRADLE_CLASSPATH_REGEX, contents);
 
             if (DEBUG_MODE) {
-                Logger.debug("Repository url: " + repositoryUrl);
-                Logger.debug("Classpath: " + classPath);
+                Logger.debug("Repository is \"" + repositoryUrl + "\"");
+                Logger.debug("Classpath is \"" + classPath + "\"");
             }
 
             String[] dependencyInfo = classPath.split(":");
@@ -90,6 +93,9 @@ public class GradlePluginDownloader {
 
         } catch (Exception ex) {
             ex.printStackTrace();
+            Logger.error("Failed to download plugins");
+            Logger.warn("If you want to see more information, using --debug");
+            return;
         }
 
         Logger.info("Completed to download plugins!");
